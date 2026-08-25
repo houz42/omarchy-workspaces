@@ -17,13 +17,16 @@ BarWidget {
     return null
   }
 
+  readonly property bool showExtended: setting("showExtended", false)
+
   function workspaceIds() {
     var ids = [1, 2, 3, 4, 5]
     var values = Hyprland.workspaces.values
+    var maxId = root.showExtended ? 22 : 10
 
     for (var i = 0; i < values.length; i++) {
       var id = values[i].id
-      if (id > 0 && id <= 22 && ids.indexOf(id) === -1) ids.push(id)
+      if (id > 0 && id <= maxId && ids.indexOf(id) === -1) ids.push(id)
     }
 
     ids.sort(function(left, right) { return left - right })
