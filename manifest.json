@@ -1,0 +1,23 @@
+{
+  "schemaVersion": 1,
+  "id": "jhou.workspaces",
+  "name": "My Workspaces",
+  "version": "1.0.0",
+  "author": "houz42",
+  "description": "Workspace number indicators, including numeric labels for extended workspaces 11-22",
+  "kinds": [
+    "bar-widget"
+  ],
+  "entryPoints": {
+    "barWidget": "Workspaces.qml"
+  },
+  "barWidget": {
+    "displayName": "My Workspaces",
+    "description": "Workspace number indicators, including numeric labels for extended workspaces 11-22",
+    "category": "Compositor",
+    "allowMultiple": false
+  },
+  "omarchy": {
+    "clonedFrom": "omarchy.workspaces"
+  }
+}
