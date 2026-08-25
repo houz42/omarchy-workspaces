@@ -20,7 +20,7 @@ set `showExtended` on the widget's entry in `~/.config/omarchy/shell.json`:
 
 ```json
 {
-  "id": "jhou.workspaces",
+  "id": "houz42.workspaces",
   "showExtended": true
 }
 ```
