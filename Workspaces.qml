@@ -2,7 +2,6 @@ import QtQuick
 import QtQuick.Layouts
 import Quickshell
 import Quickshell.Hyprland
-import Quickshell.Io
 import qs.Commons
 import qs.Commons as Commons
 import qs.Ui
@@ -82,48 +81,9 @@ BarWidget {
     if (target !== ids[index]) root.focusWorkspace(target)
   }
 
-  // The layout of the current workspace: a square tiles, a circle scrolls, and
-  // a triangle floats. It is drawn as a small glyph beside the number.
-  property string activeMode: "dwindle"
-
-  function modeGlyph(mode) {
-    if (mode === "scrolling") return "󰝥"
-    if (mode === "floating") return "󰔶"
-    return "󱓻"
-  }
-
-  // A layout only changes through the layout commands or a config reload, so
-  // each workspace's mode is read once and cached rather than running the
-  // script on every workspace switch.
-  property var modeCache: ({})
-  property int modeGeneration: 0
-  property bool modeStale: false
-  property int modeProcWorkspace: -1
-  property int modeProcGeneration: 0
-
-  function showActiveMode() {
-    var mode = root.modeCache[root.activeWorkspaceId()]
-    if (mode !== undefined) root.activeMode = mode
-    else readMode()
-  }
-
-  function readMode() {
-    if (modeProc.running) {
-      root.modeStale = true
-      return
-    }
-    var id = root.activeWorkspaceId()
-    if (id <= 0) return
-    root.modeProcWorkspace = id
-    root.modeProcGeneration = root.modeGeneration
-    modeProc.command = ["omarchy-hyprland-workspace-layout-current", String(id)]
-    modeProc.running = true
-  }
-
   function refresh() {
-    root.modeCache = ({})
-    root.modeGeneration++
-    readMode()
+    Hyprland.refreshMonitors()
+    Hyprland.refreshWorkspaces()
   }
 
   // The layout commands act on the focused workspace, so a click on another
@@ -137,34 +97,6 @@ BarWidget {
     root.bar.run(command)
   }
 
-  readonly property string modeDir: (Quickshell.env("XDG_STATE_HOME") || Quickshell.env("HOME") + "/.local/state") + "/omarchy/workspace-layouts"
-  readonly property string modeFile: root.modeDir + "/" + root.activeWorkspaceId() + ".lua"
-
-  // The layout commands also ring the bar over IPC, but older ones only save
-  // the mode file. The directory watch sees a mode file appear, go, or be
-  // replaced, and the file watch sees the current workspace's own file
-  // rewritten in place.
-  FileView {
-    path: root.modeDir
-    watchChanges: true
-    printErrors: false
-    onFileChanged: root.refresh()
-  }
-
-  FileView {
-    path: root.modeFile
-    watchChanges: true
-    printErrors: false
-    onFileChanged: root.refresh()
-  }
-
-  Component.onCompleted: refresh()
-  onMonitorChanged: root.showActiveMode()
-
-  Connections {
-    target: root.monitor
-    function onActiveWorkspaceChanged() { root.showActiveMode() }
-  }
 
   Connections {
     target: Hyprland
@@ -185,24 +117,6 @@ BarWidget {
     }
   }
 
-  Process {
-    id: modeProc
-    stdout: StdioCollector {
-      onStreamFinished: {
-        var mode = text.trim()
-        // A read that started before a refresh may predate the change.
-        if (!mode || root.modeProcGeneration !== root.modeGeneration) return
-        root.modeCache[root.modeProcWorkspace] = mode
-        if (root.modeProcWorkspace === root.activeWorkspaceId()) root.activeMode = mode
-      }
-    }
-    onExited: {
-      if (!root.modeStale) return
-      root.modeStale = false
-      // Deferred: the process still reports running while it signals exit.
-      Qt.callLater(root.showActiveMode)
-    }
-  }
 
   // The built-in widget's target and method, so the layout commands'
   // `omarchy-shell omarchy.workspaces refresh` reaches this one instead.
@@ -235,7 +149,6 @@ BarWidget {
         readonly property var workspace: root.workspaceById(modelData)
         readonly property bool occupied: workspace !== null && workspace.toplevels.values.length > 0
         readonly property bool current: root.activeWorkspaceId() === modelData
-        readonly property real badgeSize: Math.max(1, Math.round(root.barSize * 0.28))
 
         implicitWidth: button.implicitWidth
         implicitHeight: button.implicitHeight
@@ -257,21 +170,6 @@ BarWidget {
             else root.focusWorkspace(cell.modelData)
           }
           onWheelMoved: function(delta) { root.scrollWorkspaces(delta) }
-        }
-
-        // The number stays; the mode rides above its right corner so the label
-        // still reads as the absolute workspace number.
-        OpticalGlyph {
-          visible: cell.current
-          width: cell.badgeSize
-          height: cell.badgeSize
-          text: root.modeGlyph(root.activeMode)
-          fontFamily: button.fontFamily
-          paintedSize: cell.badgeSize
-          color: Commons.Color.accent
-          anchors.top: button.top
-          anchors.right: button.right
-          anchors.rightMargin: Style.spaceReal(1)
         }
 
         Rectangle {

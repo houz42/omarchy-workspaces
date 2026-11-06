@@ -16,16 +16,14 @@ It carries the 4.5 bar's workspace behavior onto that numbered strip:
 
 - The current workspace is the one this bar's monitor shows, marked with the
   accent color and an underline.
-- A small glyph above the current workspace's label shows its layout: a
-  square tiles, a circle scrolls, and a triangle floats. Clicking the current
-  workspace runs the stock layout cycle
+- Clicking the current workspace runs the stock layout cycle
   (`omarchy-hyprland-workspace-layout-toggle`); clicking any other workspace
-  focuses that absolute number.
+  focuses that absolute number. The underline is the only active-workspace
+  marker; there is no extra layout badge.
 - The wheel scrolls one workspace per notch through the numbers shown, and
   holds at either end instead of wrapping.
-- `omarchy-shell omarchy.workspaces refresh` updates it, and it watches the
-  saved layout files so tools that change a layout without asking the bar to
-  refresh still update the glyph.
+- `omarchy-shell omarchy.workspaces refresh` refreshes the live monitor and
+  workspace state.
 
 ## Install
 
