@@ -8,8 +8,9 @@ An Omarchy 4.5 shell bar-widget plugin cloned from the built-in
 The built-in widget follows Omarchy's per-monitor workspaces: each monitor
 owns a block of ten, and each bar shows its own block numbered 1-10. This
 plugin instead keeps one flat strip of global, absolute workspace numbers:
-1-22, plus any other workspace that exists, with workspace 10 labeled `0` as
-on the keyboard. Workspaces 11-22 stay hidden until `showExtended` is set.
+1-22, with workspace 10 labeled `0` as on the keyboard. The first five are
+always shown; other existing workspaces appear up to 10, or up to 22 when
+`showExtended` is set.
 
 It carries the 4.5 bar's workspace behavior onto that numbered strip:
 
