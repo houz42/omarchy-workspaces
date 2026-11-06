@@ -2,9 +2,9 @@
   "schemaVersion": 1,
   "id": "houz42.workspaces",
   "name": "My Workspaces",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "author": "houz42",
-  "description": "Workspace number indicators, including numeric labels for extended workspaces 11-22",
+  "description": "Workspace number indicators with absolute numeric labels for extended workspaces 11-22, a layout glyph, and wheel scrolling",
   "kinds": [
     "bar-widget"
   ],
@@ -13,7 +13,7 @@
   },
   "barWidget": {
     "displayName": "My Workspaces",
-    "description": "Workspace number indicators, including numeric labels for extended workspaces 11-22",
+    "description": "Absolute workspace numbers, extended workspaces 11-22, and a layout glyph",
     "category": "Compositor",
     "allowMultiple": false
   },
